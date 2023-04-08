@@ -1,8 +1,8 @@
 #ifndef _D10_H_
 #define _D10_H_
 
-#define HELP_MSG "Usage: d10 --roll | --r [dice pool] -hunger [hunger level] for regular dice rolls\nUse --rouse to Rouse the Blood \nUse --help, --h for help.\n"
-#define INVALID_MSG "Invalid command or insufficient arguments. Use --h for help.\n"
+#define HELP_MSG "\033[1;31mRegular Rolls:\033[1;0m\n    --roll [dice pool]\n\n    Optional:\n        -hunger [hunger level]\n        -difficulty [level]\n\n\033[1;31mRouse Check:\033[1;0m\n    --rouse\n\nUse --help, --h for help.\nNote: all arguments may be abbreviated to their initial, except for --rouse.\n"
+#define INVALID_MSG "Invalid command or insufficient arguments. Use --help, -h for help.\n"
 #define SUCCESS_MSG "Success! Margin:"
 #define SUCCESSES_MSG "Sucesses: "
 #define FAILIURE_MSG "Failiure. Margin:"

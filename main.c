@@ -57,16 +57,16 @@ int* rollDice(int number){
 }
 
 void roll(int regular, int hunger, int diff){
-    int i = 0, d = 0, success = 0, rCrits = 0, hCrits = 0, bestial = 0;
+    int i = 0, success = 0, rCrits = 0, hCrits = 0, bestial = 0;
     int crits = 0;
     int* dice = NULL;
 
     if (regular != -1){
-        d = regular-hunger;
-        dice = rollDice(d);
-        printRoll(d, dice, 0);
+        if (hunger != -1) regular-=hunger;
+        dice = rollDice(regular);
+        printRoll(regular, dice, 0);
         putchar('\n');
-        for(i = 0; i < d; i++){
+        for(i = 0; i < regular; i++){
             if (dice[i] >= SUCESS) success++;
             if (dice[i] >= CRIT) rCrits++;
         }
@@ -116,6 +116,7 @@ void rouse(){
 int main(int argc, char* argv[]){   
     int hunger = -1, pool = -1, diff = -1;
 
+    putchar('\n');
     srand(time(0));
     if (argc < 2){
         printf(HELP_MSG);
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]){
     else if (argc == 2){
         if (strcmp(argv[1], "--h") == 0 || strcmp(argv[1], "--help") == 0)
             printf(HELP_MSG);
-        else if (strcmp(argv[1], "--rouse") == 0) rouse();
+        else if (strcmp(argv[1], "--rouse") == 0 || strcmp(argv[1], "--r") == 0) rouse();
         else printf(INVALID_MSG);
     }
     else if (argc > 2)
@@ -152,6 +153,7 @@ int main(int argc, char* argv[]){
                 }
 
             }
+            if (hunger > pool) hunger = pool;
             roll(pool, hunger, diff);
         }
         else printf(INVALID_MSG);
