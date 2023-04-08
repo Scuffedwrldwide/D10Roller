@@ -22,9 +22,9 @@ void printDice(int size, int *dice, int isHunger){
     }
     putchar('\n');
     for (i = 0; i < size; i++){
-        if (dice[i] <= FAIL && isHunger) printf("|_/ 0 \\_| ");
-        else if (dice[i] >= CRIT) printf("|_/⋆☥⋆\\_| ");
-        else if (dice[i] >= SUCESS) printf("|_/ ☥ \\_| ");
+        if (dice[i] <= FAIL && isHunger) printf("|_/ "FAIL_ICON" \\_| ");
+        else if (dice[i] >= CRIT) printf("|_/"CRIT_ICON"\\_| ");
+        else if (dice[i] >= SUCESS) printf("|_/ "WIN_ICON" \\_| ");
         else printf("|_/   \\_| ");
         
     }
@@ -39,10 +39,12 @@ void printRoll(int number, int* dice, int isHunger){
     int lines, final, i = 0;
     lines = number / 5;
     final = number % 5;
+    if(isHunger) printf("\033[1;31m");
     for (i = 0; i < lines; i++){
         printDice(5, &dice[i*5], isHunger);
     }
     if (final > 0) printDice(final, &dice[lines*5], isHunger);
+    if (isHunger) printf("\033[1;0m");
 }
 
 int* rollDice(int number){
@@ -56,6 +58,7 @@ int* rollDice(int number){
 
 void roll(int regular, int hunger, int diff){
     int i = 0, d = 0, success = 0, rCrits = 0, hCrits = 0, bestial = 0;
+    int crits = 0;
     int* dice = NULL;
 
     if (regular != -1){
@@ -71,10 +74,8 @@ void roll(int regular, int hunger, int diff){
     }
     if (hunger != -1){
         dice = rollDice(hunger);
-        printf("\033[1;31m");
         printRoll(hunger, dice, 1);
         putchar('\n');
-        printf("\033[1;0m");
         for(i = 0; i < hunger; i++){
             if (dice[i] >= SUCESS) success++;
             if (dice[i] >= CRIT) hCrits++;
@@ -82,12 +83,13 @@ void roll(int regular, int hunger, int diff){
         }
         free(dice);
     }
-    success += ((hCrits + rCrits) / 2) * 3;
-    printf("%d %d\n", success, diff);
+    crits += (((hCrits + rCrits) / 2) * 2);
+    success += crits;
     if (diff > 0){
         if (success > diff){
             printf(SUCCESS_MSG" %d\n", abs(success - diff));
-            if ((hCrits % 2) != 0) printf(CRITICAL_MSG);
+            printf(SUCCESSES_MSG" %d\n", success);
+            if (hCrits != 0 && crits != 0) printf(CRITICAL_MSG);
         }
         else if (success < diff){
             printf(FAILIURE_MSG" %d\n", abs(success - diff));
@@ -96,9 +98,18 @@ void roll(int regular, int hunger, int diff){
         else printf(TIE_MSG);
     }
     else if (diff < 0){
-        printf(SUCESSES_MSG" %d\n", success);
+        printf(SUCCESSES_MSG" %d\n", success);
         if ((hCrits % 2) != 0) printf(CRITICAL_MSG);
     }
+
+}
+
+void rouse(){
+    int* result = rollDice(1);
+    printRoll(1, result, 1);
+    printf(ROUSE_MSG);
+    if (*result < SUCESS) printf(HUNGER_ROUSE_MSG);
+    free (result);
 
 }
 
@@ -112,7 +123,7 @@ int main(int argc, char* argv[]){
     else if (argc == 2){
         if (strcmp(argv[1], "--h") == 0 || strcmp(argv[1], "--help") == 0)
             printf(HELP_MSG);
-
+        else if (strcmp(argv[1], "--rouse") == 0) rouse();
         else printf(INVALID_MSG);
     }
     else if (argc > 2)
@@ -143,9 +154,6 @@ int main(int argc, char* argv[]){
             }
             roll(pool, hunger, diff);
         }
-        else if (strcmp(argv[1], "--h") == 0 || strcmp(argv[1], "--help") == 0)
-            printf(HELP_MSG);
-        else if (strcmp(argv[1], "--r") == 0) printf("ROUSE");
         else printf(INVALID_MSG);
     }
     else printf(INVALID_MSG);
