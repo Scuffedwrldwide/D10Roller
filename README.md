@@ -1,5 +1,5 @@
 # D10Roller
-Small C program that prints the result of an arbitrary D10 dice roll in pretty, colorful ASCII format.
+Small C program that prints the result of an arbitrary Vampire: The Masquerade D10 dice roll in pretty, colorful ASCII format.
 
 ### Features:
   
